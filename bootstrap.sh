@@ -20,7 +20,7 @@ fi
 
 find ./ -type f -exec sed -i "s/gobabygo/$PROJECT/gI" {} \;
 
-docker compose build
+docker compose build --build-arg uid=$(id -u) --build-arg gid=$(id -g)
 docker compose run web bash -c \
     "python3 manage.py makemigrations && python3 manage.py migrate"
 docker compose up "$2"

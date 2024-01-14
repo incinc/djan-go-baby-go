@@ -5,8 +5,10 @@ WORKDIR /opt
 
 RUN apt-get update && apt-get install -y build-essential libpq-dev
 
-RUN groupadd -r appuser -g 1000 \
-  && useradd --no-log-init -m -r -g 1000 -u 1000 appuser \
+ARG uid=1000
+ARG gid=1000
+RUN groupadd -r appuser -g $gid \
+  && useradd --no-log-init -m -r -g $gid -u $uid appuser \
   && chown -R root:appuser /opt/ \
   && chmod g+w /opt/
 
