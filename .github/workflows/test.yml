@@ -13,7 +13,7 @@ jobs:
 
     - name: Run bootstrap script
       run: |
-        ./bootstrap.sh myapp
+        ./bootstrap.sh myapp -d
         sleep 60
 
     - name: Check server response
