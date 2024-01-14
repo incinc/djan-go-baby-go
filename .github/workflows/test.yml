@@ -14,11 +14,11 @@ jobs:
     - name: Run bootstrap script
       run: |
         ./bootstrap.sh myapp -d
-        sleep 60
+        sleep 90
 
     - name: Check server response
       run: |
-        sudo apt-get install -y curl
+        docker ps -q | xargs -i% docker logs %
         RESPONSE_CODE=$(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8888/)
         if [ "$RESPONSE_CODE" -ne "200" ]
         then
