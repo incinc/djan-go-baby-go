@@ -18,7 +18,7 @@ jobs:
 
     - name: Check server response
       run: |
-        apt-get install -y curl
+        sudo apt-get install -y curl
         RESPONSE_CODE=$(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8888/)
         if [ "$RESPONSE_CODE" -ne "200" ]
         then
