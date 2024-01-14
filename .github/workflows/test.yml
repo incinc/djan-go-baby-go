@@ -1,0 +1,29 @@
+name: Test Bootstrapping
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Run bootstrap script
+      run: |
+        ./bootstrap.sh myapp
+        sleep 60
+
+    - name: Check server response
+      run: |
+        apt-get install -y curl
+        RESPONSE_CODE=$(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8888/)
+        if [ "$RESPONSE_CODE" -ne "200" ]
+        then
+          echo "The server did not return a 200 response code. Exiting with status 1."
+          exit 1
+        else
+          echo "The server returned a 200 response code. Test success."
+        fi

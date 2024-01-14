@@ -1,17 +1,26 @@
 #!/usr/bin/env bash
 
-args=("$@")
-PROJECT="$args[1]"
 
-cp ./.env.example ./.env
-echo "SECRET_KEY=\"$(head -c 64 /dev/urandom | base64 -w0)\"" >> .env
+generate_secret() {
+    shuf -er -n"$1" {A..Z} {a..z} {0..9} | tr -d '\n'
+}
 
-mv mynewapp "$PROJECT"
-find ./ -type f -exec sed -i "s/mynewapp/$PROJECT/gI" {} \;
+PROJECT="$1"
+echo "Bootstrapping as '$PROJECT'"
+
+if [ ! -f "./.env" ]; then
+    export POSTGRES_PASSWORD="$(generate_secret 20)"
+    export SECRET_KEY="$(generate_secret 128)"
+    envsubst < .env.tmpl > .env
+fi
+
+if [ ! -d "$PROJECT" ]; then
+    mv gobabygo "$PROJECT"
+fi
+
+find ./ -type f -exec sed -i "s/gobabygo/$PROJECT/gI" {} \;
 
 docker compose build
-docker compose up
-
-docker compose exec web python3 bash -c \
+docker compose run web bash -c \
     "python3 manage.py makemigrations && python3 manage.py migrate"
-
+docker compose up

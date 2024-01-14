@@ -1,0 +1,17 @@
+celery[redis]
+dj_database_url
+django-celery-beat
+django-ninja
+django-sesame
+django-two-factor-auth[phonenumberslite]
+django-webpack-loader
+Django>=4.0,<5.0
+gunicorn
+Jinja2
+pip-tools
+psycopg2
+pytest-django
+redis
+sentry-sdk[django]
+stripe
+whitenoise

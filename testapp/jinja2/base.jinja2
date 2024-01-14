@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  {% block head %}
+    <meta name="ENVIRONMENT" value="{{ settings.ENVIRONMENT }}">
+    <meta name="ENVIRONMENT" value="{{ settings.SENTRY_DSN }}">
+    {{ render_bundle('app', 'css') }}
+  {% endblock %}
+</head>
+<body>
+  {% block content %}
+  {% endblock %}
+
+  {% block foot %}
+  {{ render_bundle('app', 'js') }}
+  {% endblock %}
+</body>
+</html>

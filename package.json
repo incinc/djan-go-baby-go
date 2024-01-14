@@ -1,0 +1,47 @@
+{
+  "scripts": {
+    "start": "HOT_RELOAD=1 /opt/node_modules/webpack-dev-server/bin/webpack-dev-server.js --mode development --config webpack.config.js --host=0.0.0.0",
+    "build": "NODE_ENV=production SOURCE_VERSION=$(git rev-parse HEAD) /opt/node_modules/webpack-cli/bin/cli.js --mode production --config webpack.config.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/preset-env": "^7.21.4",
+    "@sentry/browser": "^7.83.0",
+    "@vue/test-utils": "^2.3.2",
+    "autoprefixer": "^10.4.14",
+    "babel-loader": "^9.1.2",
+    "browserslist": "^4.21.5",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-hot-loader": "^1.4.4",
+    "css-loader": "^6.7.3",
+    "css-minimizer-webpack-plugin": "^5.0.0",
+    "eslint-plugin-babel": "^5.3.1",
+    "file-loader": "^6.2.0",
+    "imports-loader": "^4.0.1",
+    "mini-css-extract-plugin": "^2.7.5",
+    "naive-ui": "^2.34.3",
+    "pinia": "^2.0.35",
+    "postcss-loader": "^7.2.4",
+    "primeflex": "^3.3.1",
+    "primevue": "^3.39.0",
+    "sass": "^1.62.1",
+    "sass-loader": "^13.2.2",
+    "style-loader": "^3.3.2",
+    "url": "^0.11.0",
+    "vue": "^3.2.47",
+    "vue-loader": "^17.1.0",
+    "vue-style-loader": "^4.1.3",
+    "vue-template-compiler": "^2.7.14",
+    "webpack": "^5.81.0",
+    "webpack-bundle-analyzer": "^4.8.0",
+    "webpack-bundle-tracker": "^1.8.1",
+    "webpack-cli": "^5.0.2",
+    "webpack-dev-server": "^4.13.3",
+    "unplugin-vue-components": "^0.25.2",
+    "vue-router": "^4.2.5"
+  },
+  "dependencies": {
+  }
+}
