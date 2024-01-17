@@ -1,5 +1,5 @@
 # djan-go-baby-go
-A quick template for setting up a well-rounded development environment with Django and Vue3.
+A quick template for setting up a well-rounded rapid application development environment with Django and Vue3.
 
 Ensure you have Docker, make a copy of this repo, then run:
 
