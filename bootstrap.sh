@@ -6,6 +6,14 @@ generate_secret() {
 }
 
 PROJECT="$1"
+
+valid_python_identifier='^[a-zA-Z0-9_]+$'
+
+if ! [[ $PROJECT =~ $valid_python_identifier ]]; then
+    echo "$PROJECT is not a valid Python identifier. Only alphanumeric characters and underscores are allowed."
+    exit 1
+fi
+
 echo "Bootstrapping as '$PROJECT'"
 
 if [ ! -f "./.env" ]; then
