@@ -48,7 +48,7 @@ module.exports = {
   output: {
     path: path.resolve('./static/dist/'),
     filename: '[name]-[fullhash].js',
-    publicPath: '/webpack-dist/'
+    publicPath: hotReload ? '/webpack-dist/' : '',
   },
   devtool: devEnv ? 'eval-cheap-source-map' : 'source-map',
   devServer: {
