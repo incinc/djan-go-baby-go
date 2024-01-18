@@ -1,40 +1,42 @@
 # djan-go-baby-go
-A quick template for setting up a well-rounded rapid application development environment with Django and Vue3.
+In less than three minutes this will set up a fully functional rapid application dev environment with Django and Vue.
 
-Ensure you have Docker, make a copy of this repo, then run:
+Ensure you have [Docker](https://docs.docker.com/desktop/), make a copy of this template repo, then run:
 
 ```bash
 ./bootstrap.sh <my project name>
 ```
 
 The bootstrap script will:
-- Project-wide find and replace `gobabygo` to your project name. Ensure it's a valid Python module name (e.g. no hyphens).
-- Fill in the .env.tmpl with suitable values.
-- Build and run the containers from the docker-compose file.
+- Rename everything in the project from `gobabygo` to your project name.
+- Populate the `.env.tmpl` into `.env` with suitable starting values.
+- Builds/pulls containers from the docker-compose file.
+- Generates and applies initial Django migrations.
 
-At the end of the bootstrap process, you should be able to visit http://localhost:8888/ to find a running app.
+The final step of the bootstrap script runs `docker compose up`, check http://localhost:8888/ to find a running app.
 
 ### What this includes
 
 This is an opinionated template that brings together a number of other tools and libraries I've enjoyed working with. Maybe you'll like them as well.
 
 #### Foundation & Tooling
-- PostgreSQL
-- Redis
-- Docker Compose
-- Webpack
+- [PostgreSQL](https://www.postgresql.org/docs/15/index.html)
+- [Redis](https://redis.io/docs/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- [Webpack](https://webpack.js.org/concepts/)
 
 #### Python Libraries
-- Django with Jinja2
-- Django Ninja
-- Celery (with Beat)
-- pytest
+- [Django](https://docs.djangoproject.com/en/4.2/) with [Jinja2](https://jinja.palletsprojects.com/en/3.1.x/)
+- [Django Ninja](https://django-ninja.dev/)
+- [Celery](https://docs.celeryq.dev/en/stable/getting-started/introduction.html) (with [Beat](https://django-celery-beat.readthedocs.io/en/latest/))
+- [pytest](https://docs.pytest.org/en/7.4.x/)
 
 #### Frontend
-- Vue 3
-- Pinia
-- PrimeVue component library
+- [Vue 3](https://vuejs.org/guide/introduction.html)
+  - [Vue Router](https://router.vuejs.org/guide/)
+  - [Pinia](https://pinia.vuejs.org/core-concepts/)
+- [PrimeVue](https://primevue.org/introduction/) component library
 
 #### Services
-- Sentry
-- Stripe
+- [Sentry](https://docs.sentry.io/platforms/python/integrations/django/)
+- [Stripe](https://stripe.com/docs/api?lang=python)
