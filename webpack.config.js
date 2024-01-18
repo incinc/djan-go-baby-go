@@ -15,8 +15,8 @@ const plugins = [
   new BundleTracker({ filename: statsFile }),
   new VueLoaderPlugin(),
   new MiniCssExtractPlugin({
-    filename: devEnv ? '[name].css' : '[name].[hash].css',
-    chunkFilename: devEnv ? '[id].css' : '[id].[hash].css'
+    filename: devEnv ? '[name].css' : '[name].[fullhash].css',
+    chunkFilename: devEnv ? '[id].css' : '[id].[fullhash].css'
   }),
   new CleanWebpackPlugin(),
 ];
@@ -47,7 +47,7 @@ module.exports = {
   },
   output: {
     path: path.resolve('./static/dist/'),
-    filename: '[name]-[hash].js',
+    filename: '[name]-[fullhash].js',
     publicPath: '/webpack-dist/'
   },
   devtool: devEnv ? 'eval-cheap-source-map' : 'source-map',
