@@ -40,3 +40,9 @@ This is an opinionated template that brings together a number of other tools and
 #### Services
 - [Sentry](https://docs.sentry.io/platforms/python/integrations/django/)
 - [Stripe](https://stripe.com/docs/api?lang=python)
+
+### Contributing
+
+The intent of this template is to provide a starting point where things "just work" out of the box. Contributions should follow that as a guiding principle: if a change introduces something that requires extensive customization after running the boostrap script for it to work at all, it's probably not a great thing to include.
+
+Secondary to that, the bootstrap script is intended to be a single path: it is not the intent to introduce an interactive or configurable process that produces a different result based on user choices, but instead produce one output that can be modified manually after the fact.
