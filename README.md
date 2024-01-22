@@ -43,6 +43,15 @@ This is an opinionated template that brings together a number of other tools and
 
 ### Contributing
 
+The goals of the template are that it remain:
+
+- One-click to a running app
+- "Available in any color, so long as it is black"
+- Easy to maintain up-to-date dependencies
+- Easy to understand the structure and layout
+
 The intent of this template is to provide a starting point where things "just work" out of the box. Contributions should follow that as a guiding principle: if a change introduces something that requires extensive customization after running the boostrap script for it to work at all, it's probably not a great thing to include.
 
 Secondary to that, the bootstrap script is intended to be a single path: it is not the intent to introduce an interactive or configurable process that produces a different result based on user choices, but instead produce one output that can be modified manually after the fact.
+
+Dependencies *do not follow LTS releases*. The intent is that dependencies, including Djang itself, are up to date with the latest stable release wherever possible. If an important dependency becomes unmaintained or there are significant benefits to be had from an alternative, it should be replaced.
