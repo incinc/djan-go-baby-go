@@ -24,7 +24,7 @@ from gobabygo.api import api
 
 
 urlpatterns = [
-    path('', gobabygo.views.index),
+    path('', gobabygo.views.index, name='index'),
     re_path('^vue', gobabygo.views.vue_index), # suburls routed with vue-router in app.js
     path('api/', api.urls),
     path('', include(tf_urls)),

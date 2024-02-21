@@ -3,6 +3,7 @@
 {% block content %}
   Hello World
 
+  <p>You are here: {{ request.build_absolute_uri() }}</p>
   <ul>
     <li><a href="/vue/test">Vue-router base</a></li>
     <li><a href="/api/whoami">API</a></li>
