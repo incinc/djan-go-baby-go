@@ -10,7 +10,7 @@ elif [[ "$1" == "install"* ]]; then
     echo "$2" >> requirements.in
     sort -b requirements.in -o requirements.in
 else
-    echo "Invalid argument. Please use 'install' or 'uninstall'."
+    echo "Invalid argument. Please use 'install', 'uninstall', or 'recompile'."
     exit 1
 fi
 
