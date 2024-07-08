@@ -1,9 +1,10 @@
+black
 celery[redis]
 dj_database_url
 django-celery-beat
+django-jinja
 django-ninja
 django-sesame
-django-two-factor-auth[phonenumberslite]
 django-webpack-loader
 Django>=4.0,<5.0
 gunicorn
@@ -13,5 +14,6 @@ psycopg2
 pytest-django
 redis
 sentry-sdk[django]
+social-auth-app-django
 stripe
 whitenoise
