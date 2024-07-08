@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "celery",
     "django_celery_beat",
     "webpack_loader",
-    "django_social",
+    "social_django",
     "django_otp",
     "django_otp.plugins.otp_static",
     "django_otp.plugins.otp_totp",
