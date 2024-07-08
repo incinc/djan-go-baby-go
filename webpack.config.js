@@ -61,6 +61,7 @@ module.exports = {
   },
   resolve: {
     alias: {'@frontend': path.resolve(__dirname, 'frontend/')},
+    fallback: { "url": require.resolve("url/") },
   },
   module: { rules: [
       styleRule,

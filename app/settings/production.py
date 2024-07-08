@@ -6,7 +6,7 @@ sentry_sdk.init(dsn=SENTRY_DSN, environment="prd")
 
 DATABASES["default"] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
-ENVIRONMENT = "stg"
+ENVIRONMENT = "prd"
 
 SECRET_KEY = os.environ["SECRET_KEY"]
 
