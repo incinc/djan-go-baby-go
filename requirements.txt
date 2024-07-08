@@ -57,22 +57,34 @@ django==4.2.9
     #   -r requirements.in
     #   dj-database-url
     #   django-celery-beat
+    #   django-formtools
     #   django-jinja
     #   django-ninja
+    #   django-otp
+    #   django-phonenumber-field
     #   django-sesame
     #   django-timezone-field
+    #   django-two-factor-auth
     #   sentry-sdk
     #   social-auth-app-django
 django-celery-beat==2.5.0
     # via -r requirements.in
+django-formtools==2.5.1
+    # via django-two-factor-auth
 django-jinja==2.11.0
     # via -r requirements.in
 django-ninja==1.1.0
     # via -r requirements.in
+django-otp==1.5.0
+    # via django-two-factor-auth
+django-phonenumber-field==7.3.0
+    # via django-two-factor-auth
 django-sesame==3.2.2
     # via -r requirements.in
 django-timezone-field==6.1.0
     # via django-celery-beat
+django-two-factor-auth[phonenumberslite]==1.16.0
+    # via -r requirements.in
 django-webpack-loader==3.0.0
     # via -r requirements.in
 gunicorn==21.2.0
@@ -103,6 +115,8 @@ packaging==23.2
     #   pytest
 pathspec==0.12.1
     # via black
+phonenumberslite==8.13.40
+    # via django-two-factor-auth
 pip-tools==7.4.0
     # via -r requirements.in
 platformdirs==4.2.2
@@ -121,6 +135,8 @@ pydantic-core==2.14.6
     # via pydantic
 pyjwt==2.8.0
     # via social-auth-core
+pypng==0.20220715.0
+    # via qrcode
 pyproject-hooks==1.0.0
     # via
     #   build
@@ -137,6 +153,8 @@ python-dateutil==2.8.2
     #   python-crontab
 python3-openid==3.2.0
     # via social-auth-core
+qrcode==7.4.2
+    # via django-two-factor-auth
 redis==5.0.1
     # via
     #   -r requirements.in
@@ -165,6 +183,7 @@ typing-extensions==4.9.0
     #   dj-database-url
     #   pydantic
     #   pydantic-core
+    #   qrcode
     #   stripe
 tzdata==2023.4
     # via
