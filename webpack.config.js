@@ -5,6 +5,8 @@ const BundleTracker = require("webpack-bundle-tracker");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { VueLoaderPlugin } = require("vue-loader");
+const UnpluginVueComponents = require("unplugin-vue-components/webpack");
+const { PrimeVueResolver } = require("unplugin-vue-components/resolvers");
 
 const devEnv = process.env.NODE_ENV !== "production";
 const hotReload = process.env.HOT_RELOAD === "1";
@@ -19,6 +21,14 @@ const plugins = [
     chunkFilename: devEnv ? "[id].css" : "[id].[fullhash].css",
   }),
   new CleanWebpackPlugin(),
+  UnpluginVueComponents({
+    resolvers: [PrimeVueResolver()],
+  }),
+  new webpack.DefinePlugin({
+    __VUE_OPTIONS_API__: "true",
+    __VUE_PROD_DEVTOOLS__: "false",
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "false",
+  }),
 ];
 
 const styleRule = {
@@ -76,10 +86,6 @@ module.exports = {
         loader: "babel-loader",
         include: path.resolve("./frontend/app/js"),
         exclude: /node_modules/,
-      },
-      {
-        test: /.(jpg|png|woff(2)?|eot|ttf|svg)$/,
-        loader: "file-loader",
       },
     ],
   },
