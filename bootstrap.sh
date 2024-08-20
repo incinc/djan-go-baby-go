@@ -28,6 +28,8 @@ fi
 
 find ./ -type f -exec sed -i "s/gobabygo/$PROJECT/gI" {} \;
 
+rm ./.env.tmpl ./bootstrap.sh ./LICENSE
+
 docker compose build --build-arg uid=$(id -u) --build-arg gid=$(id -g)
 docker compose run web bash -c \
     "python3 manage.py makemigrations && python3 manage.py migrate"
