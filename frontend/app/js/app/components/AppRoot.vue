@@ -3,14 +3,11 @@
 </template>
 
 <script>
-  export default {
-    data () {
-      return {
-      }
-    },
-    components: {
-    },
-    created: function() {
-    }
-  }
+export default {
+  data() {
+    return {};
+  },
+  components: {},
+  created: function () {},
+};
 </script>
