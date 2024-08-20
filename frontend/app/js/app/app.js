@@ -18,6 +18,7 @@ import { createPinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 
 import PrimeVue from "primevue/config";
+import Aura from "@primevue/themes/aura";
 
 import AppRoot from "@app/components/AppRoot.vue";
 import Test from "@app/components/Test.vue";

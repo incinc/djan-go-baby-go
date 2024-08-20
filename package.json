@@ -7,6 +7,7 @@
     "@babel/core": "^7.21.4",
     "@babel/preset-env": "^7.21.4",
     "@fontsource-variable/inter": "^5.0.20",
+    "@primevue/themes": "^4.0.4",
     "@sentry/browser": "^7.119.0",
     "@vue/test-utils": "^2.3.2",
     "autoprefixer": "^10.4.14",
