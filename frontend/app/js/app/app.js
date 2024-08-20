@@ -23,7 +23,8 @@ import AppRoot from "@app/components/AppRoot.vue";
 import Test from "@app/components/Test.vue";
 
 import "primeflex/primeflex.css";
-import "primevue/resources/themes/lara-light-teal/theme.css";
+import "@fontsource-variable/inter";
+import "primeicons/primeicons.css";
 import "@frontend/app/css/base.css";
 
 const pinia = createPinia();
@@ -36,7 +37,17 @@ const router = createRouter({
 });
 
 const app = createApp(AppRoot);
-app.use(PrimeVue);
+app.use(PrimeVue, {
+  // Default theme configuration
+  theme: {
+    preset: Aura,
+    options: {
+      prefix: "",
+      darkModeSelector: "system",
+      cssLayer: false,
+    },
+  },
+});
 app.use(pinia);
 app.use(router);
 
