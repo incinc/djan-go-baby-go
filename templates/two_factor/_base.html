@@ -1,0 +1,35 @@
+{% load render_bundle from webpack_loader %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  {% block head %}
+    <meta name="ENVIRONMENT" value="{{ settings.ENVIRONMENT }}">
+    <meta name="SENTRY_DSN" value="{{ settings.SENTRY_DSN }}">
+    {% render_bundle 'app' 'css' %}
+    <script>
+      window.__APP_STATE = {
+        csrf_token: '{{ csrf_token }}',
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter Variable";
+      }
+    </style>
+  {% endblock %}
+  {% render_bundle 'app' 'css' %}
+</head>
+<body>
+  <div class="flex flex-row justify-content-center align-items-center mb-4" style="height: 75vh">
+    <div class="flex flex-column border-round-md shadow-3 w-25 p-5">
+      {% block content_wrapper %}
+      {% endblock %}
+    </div>
+  </div>
+
+  {% block foot %}
+  {% render_bundle 'app' 'js' %}
+  {% endblock %}
+</body>
+</html>
