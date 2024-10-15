@@ -26,7 +26,7 @@ if [ ! -d "$PROJECT" ]; then
     mv gobabygo "$PROJECT"
 fi
 
-find ./ -type f -exec sed -i "s/gobabygo/$PROJECT/gI" {} \;
+find ./ -type f -not -path '*/.git/*' -exec sed -i "s/gobabygo/$PROJECT/gI" {} \;
 
 rm ./.env.tmpl ./bootstrap.sh ./LICENSE
 
