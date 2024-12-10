@@ -1,7 +1,7 @@
 # djan-go-baby-go
 In less than three minutes this will set up a fully functional rapid application dev environment with Django and Vue.
 
-Ensure you have [Docker](https://docs.docker.com/desktop/), make a copy of this template repo, then run:
+The only requirement is [Docker](https://docs.docker.com/desktop/). Make a copy of this template repo, then run:
 
 ```bash
 ./bootstrap.sh <my project name>
