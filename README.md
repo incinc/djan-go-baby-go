@@ -15,6 +15,8 @@ The bootstrap script will:
 
 The final step of the bootstrap script runs `docker compose up`, check http://localhost:8888/ to find a running app.
 
+The bootstrap process has been tested on Linux and MacOS, but not Windows (contributions welcome if it does not work in WSL).
+
 ### What this includes
 
 This is an opinionated template that brings together a number of other tools and libraries I've enjoyed working with. Maybe you'll like them as well.
