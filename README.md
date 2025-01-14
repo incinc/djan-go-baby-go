@@ -1,7 +1,7 @@
 # djan-go-baby-go
 In less than three minutes this will set up a fully functional rapid application dev environment with Django and Vue.
 
-Ensure you have [Docker](https://docs.docker.com/desktop/), make a copy of this template repo, then run:
+The only requirement is [Docker](https://docs.docker.com/desktop/). Make a copy of this template repo, then run:
 
 ```bash
 ./bootstrap.sh <my project name>
@@ -14,6 +14,8 @@ The bootstrap script will:
 - Generates and applies initial Django migrations.
 
 The final step of the bootstrap script runs `docker compose up`, check http://localhost:8888/ to find a running app.
+
+The bootstrap process has been tested on Linux and MacOS, but not Windows (contributions welcome if it does not work in WSL).
 
 ### What this includes
 

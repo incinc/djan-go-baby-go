@@ -163,3 +163,4 @@ cython_debug/
 .envnode_modules
 webpack-stats-dev.json
 node_modules
+.aider*
