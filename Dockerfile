@@ -1,4 +1,4 @@
-FROM node:18-buster as webpack
+FROM node:23-bookworm as webpack
 
 WORKDIR /opt
 
@@ -16,7 +16,7 @@ RUN npm run-script build-docker
 
 ## Python app
 
-FROM python:3.12-slim-bookworm
+FROM python:3.13-slim-bookworm
 
 ENV PYTHONUNBUFFERED 1
 WORKDIR /opt
