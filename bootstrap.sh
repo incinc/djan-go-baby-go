@@ -13,6 +13,12 @@ if [ -z "$PROJECT" ]; then
     exit 1
 fi
 
+# Validate project name is a valid Python identifier
+if ! echo "$PROJECT" | grep -qE '^[a-zA-Z0-9_]+$'; then
+    echo "$PROJECT is not a valid Python identifier. Only alphanumeric characters and underscores are allowed."
+    exit 1
+fi
+
 # Run the bootstrap process in a container
 docker run --rm -v "$(pwd):/work" -w /work alpine:3.18 sh -c "
     # Install required tools
