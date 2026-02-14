@@ -8,19 +8,19 @@ amqp==5.3.1
     # via kombu
 annotated-types==0.7.0
     # via pydantic
-asgiref==3.10.0
+asgiref==3.11.1
     # via django
-billiard==4.2.2
+billiard==4.2.4
     # via celery
-black==25.9.0
+black==26.1.0
     # via -r requirements.in
-build==1.3.0
+build==1.4.0
     # via pip-tools
-celery[redis]==5.5.3
+celery[redis]==5.6.2
     # via
     #   -r requirements.in
     #   django-celery-beat
-certifi==2025.10.5
+certifi==2026.1.4
     # via
     #   requests
     #   sentry-sdk
@@ -28,7 +28,7 @@ cffi==2.0.0
     # via cryptography
 charset-normalizer==3.4.4
     # via requests
-click==8.3.0
+click==8.3.1
     # via
     #   black
     #   celery
@@ -42,17 +42,15 @@ click-plugins==1.1.1.2
     # via celery
 click-repl==0.3.0
     # via celery
-cron-descriptor==2.0.6
-    # via django-celery-beat
-cryptography==46.0.3
+cryptography==46.0.5
     # via pyjwt
 defusedxml==0.7.1
     # via
     #   python3-openid
     #   social-auth-core
-dj-database-url==3.0.1
+dj-database-url==3.1.0
     # via -r requirements.in
-django==5.2.7
+django==6.0.2
     # via
     #   -r requirements.in
     #   dj-database-url
@@ -67,27 +65,27 @@ django==5.2.7
     #   django-two-factor-auth
     #   sentry-sdk
     #   social-auth-app-django
-django-celery-beat==2.8.1
+django-celery-beat==2.1.0
     # via -r requirements.in
 django-formtools==2.5.1
     # via django-two-factor-auth
 django-jinja==2.11.0
     # via -r requirements.in
-django-ninja==1.4.5
+django-ninja==1.5.3
     # via -r requirements.in
-django-otp==1.6.2
+django-otp==1.7.0
     # via django-two-factor-auth
-django-phonenumber-field==8.3.0
+django-phonenumber-field==8.4.0
     # via django-two-factor-auth
 django-sesame==3.2.3
     # via -r requirements.in
-django-timezone-field==7.1
+django-timezone-field==4.2.3
     # via django-celery-beat
 django-two-factor-auth[phonenumberslite]==1.18.1
     # via -r requirements.in
-django-webpack-loader==3.2.1
+django-webpack-loader==3.2.3
     # via -r requirements.in
-gunicorn==23.0.0
+gunicorn==25.1.0
     # via -r requirements.in
 idna==3.11
     # via requests
@@ -97,7 +95,7 @@ jinja2==3.1.6
     # via
     #   -r requirements.in
     #   django-jinja
-kombu[redis]==5.5.4
+kombu[redis]==5.6.2
     # via celery
 markupsafe==3.0.3
     # via jinja2
@@ -107,20 +105,21 @@ oauthlib==3.3.1
     # via
     #   requests-oauthlib
     #   social-auth-core
-packaging==25.0
+packaging==26.0
     # via
     #   black
     #   build
     #   gunicorn
     #   kombu
     #   pytest
-pathspec==0.12.1
+    #   wheel
+pathspec==1.0.4
     # via black
 phonenumberslite==8.13.55
     # via django-two-factor-auth
-pip-tools==7.5.1
+pip-tools==7.5.3
     # via -r requirements.in
-platformdirs==4.5.0
+platformdirs==4.8.0
     # via black
 pluggy==1.6.0
     # via pytest
@@ -128,15 +127,15 @@ prompt-toolkit==3.0.52
     # via click-repl
 psycopg2==2.9.11
     # via -r requirements.in
-pycparser==2.23
+pycparser==3.0
     # via cffi
-pydantic==2.12.3
+pydantic==2.12.5
     # via django-ninja
-pydantic-core==2.41.4
+pydantic-core==2.41.5
     # via pydantic
 pygments==2.19.2
     # via pytest
-pyjwt[crypto]==2.10.1
+pyjwt[crypto]==2.11.0
     # via
     #   pyjwt
     #   social-auth-core
@@ -144,7 +143,7 @@ pyproject-hooks==1.2.0
     # via
     #   build
     #   pip-tools
-pytest==8.4.2
+pytest==9.0.2
     # via pytest-django
 pytest-django==4.11.1
     # via -r requirements.in
@@ -154,11 +153,13 @@ python-dateutil==2.9.0.post0
     # via celery
 python3-openid==3.2.0
     # via social-auth-core
-pytokens==0.2.0
+pytokens==0.4.1
     # via black
+pytz==2025.2
+    # via django-timezone-field
 qrcode==8.2
     # via django-two-factor-auth
-redis==5.2.1
+redis==6.4.0
     # via
     #   -r requirements.in
     #   kombu
@@ -169,32 +170,33 @@ requests==2.32.5
     #   stripe
 requests-oauthlib==2.0.0
     # via social-auth-core
-sentry-sdk[django]==2.42.1
+sentry-sdk[django]==2.52.0
     # via -r requirements.in
 six==1.17.0
     # via python-dateutil
-social-auth-app-django==5.6.0
+social-auth-app-django==5.7.0
     # via -r requirements.in
-social-auth-core==4.8.1
+social-auth-core==4.8.5
     # via social-auth-app-django
-sqlparse==0.5.3
+sqlparse==0.5.5
     # via django
-stripe==13.0.1
+stripe==14.3.0
     # via -r requirements.in
 typing-extensions==4.15.0
     # via
-    #   cron-descriptor
     #   pydantic
     #   pydantic-core
     #   stripe
     #   typing-inspection
 typing-inspection==0.4.2
     # via pydantic
-tzdata==2025.2
+tzdata==2025.3
     # via
     #   django-celery-beat
     #   kombu
-urllib3==2.5.0
+tzlocal==5.3.1
+    # via celery
+urllib3==2.6.3
     # via
     #   requests
     #   sentry-sdk
@@ -203,9 +205,9 @@ vine==5.1.0
     #   amqp
     #   celery
     #   kombu
-wcwidth==0.2.14
+wcwidth==0.6.0
     # via prompt-toolkit
-wheel==0.45.1
+wheel==0.46.3
     # via pip-tools
 whitenoise==6.11.0
     # via -r requirements.in
