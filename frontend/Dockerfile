@@ -1,4 +1,4 @@
-FROM node:23-bookworm-slim
+FROM node:26-trixie-slim
 
 WORKDIR /opt
 

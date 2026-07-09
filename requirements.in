@@ -7,7 +7,7 @@ django-ninja
 django-sesame
 django-two-factor-auth[phonenumberslite]
 django-webpack-loader
-Django>=5.0,<6.0
+Django>=6.0,<7.0
 gunicorn
 Jinja2
 pip-tools

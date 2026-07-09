@@ -14,7 +14,7 @@ const hotReload = process.env.HOT_RELOAD === "1";
 const statsFile = devEnv ? "webpack-stats-dev.json" : "webpack-stats.json";
 
 const plugins = [
-  new BundleTracker({ filename: statsFile }),
+  new BundleTracker({ path: __dirname, filename: statsFile }),
   new VueLoaderPlugin(),
   new MiniCssExtractPlugin({
     filename: devEnv ? "[name].css" : "[name].[fullhash].css",

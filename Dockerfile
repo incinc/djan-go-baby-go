@@ -1,4 +1,4 @@
-FROM node:23-bookworm as webpack
+FROM node:26-trixie as webpack
 
 WORKDIR /opt
 
@@ -16,7 +16,7 @@ RUN npm run-script build-docker
 
 ## Python app
 
-FROM python:3.13-slim-bookworm
+FROM python:3.14-slim-trixie
 
 ENV PYTHONUNBUFFERED 1
 WORKDIR /opt

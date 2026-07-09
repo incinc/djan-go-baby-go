@@ -20,7 +20,7 @@ if ! echo "$PROJECT" | grep -qE '^[a-zA-Z0-9_]+$'; then
 fi
 
 # Run the bootstrap process in a container
-docker run --rm -v "$(pwd):/work" -w /work alpine:3.18 sh -c "
+docker run --rm -v "$(pwd):/work" -w /work alpine:3.24 sh -c "
     # Install required tools
     apk add --no-cache gettext
 
