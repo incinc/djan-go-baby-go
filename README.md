@@ -22,14 +22,17 @@ The bootstrap process has been tested on Linux and MacOS, but not Windows (contr
 This is an opinionated template that brings together a number of other tools and libraries I've enjoyed working with. Maybe you'll like them as well.
 
 #### Foundation & Tooling
-- [PostgreSQL](https://www.postgresql.org/docs/15/index.html)
+- [PostgreSQL](https://www.postgresql.org/docs/18/index.html)
 - [Redis](https://redis.io/docs/)
 - [Docker Compose](https://docs.docker.com/compose/)
 - [Webpack](https://webpack.js.org/concepts/)
+- [Uvicorn](https://www.uvicorn.org/) (ASGI end-to-end)
 
 #### Python Libraries
-- [Django](https://docs.djangoproject.com/en/4.2/) with [Jinja2](https://jinja.palletsprojects.com/en/3.1.x/)
+- [Django](https://docs.djangoproject.com/en/6.0/) with [Jinja2](https://jinja.palletsprojects.com/en/3.1.x/)
 - [Django Ninja](https://django-ninja.dev/)
+- [Channels](https://channels.readthedocs.io/en/latest/) WebSockets, backed by the Redis channel layer
+- [MCP server](https://modelcontextprotocol.io/) at `/mcp`, built on the [official python SDK](https://github.com/modelcontextprotocol/python-sdk)
 - [Celery](https://docs.celeryq.dev/en/stable/getting-started/introduction.html) (with [Beat](https://django-celery-beat.readthedocs.io/en/latest/))
 - [pytest](https://docs.pytest.org/en/7.4.x/)
 

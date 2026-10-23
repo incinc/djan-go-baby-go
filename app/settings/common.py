@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "celery",
+    "channels",
     "django_celery_beat",
     "webpack_loader",
     "social_django",
@@ -98,8 +99,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = "app.wsgi.application"
 
 DATABASES = {}
 
@@ -164,7 +163,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("gobabygo-redis-1", 6379)],
+            "hosts": [os.environ.get("REDIS_URL", "redis://localhost:6379")],
         },
     },
 }

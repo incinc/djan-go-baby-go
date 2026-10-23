@@ -8,5 +8,77 @@
     <li><a href="/vue/test">Vue-router base</a></li>
     <li><a href="/api/whoami">API</a></li>
     <li><a href="/admin">Admin</a></li>
+    <li>
+      MCP server at <code>/mcp</code> &mdash; <span id="mcp-status">checking&hellip;</span>
+      <br>
+      <small>
+        connect a client with:
+        <code>claude mcp add --transport http gobabygo {{ request.build_absolute_uri('/mcp') }}</code>
+      </small>
+    </li>
+    <li>
+      WebSockets at <code>/ws/echo</code> &mdash; <span id="ws-status">connecting&hellip;</span>
+      <form id="ws-form">
+        <input id="ws-input" placeholder="broadcast a message (try two tabs)">
+        <button>Send</button>
+      </form>
+      <ul id="ws-log"></ul>
+    </li>
   </ul>
+
+  <script>
+    // --- MCP status: run a real handshake against the streamable HTTP endpoint.
+    const rpc = async (body, sessionId) => {
+      const headers = { "Content-Type": "application/json", "Accept": "application/json, text/event-stream" };
+      if (sessionId) headers["mcp-session-id"] = sessionId;
+      const resp = await fetch("/mcp", { method: "POST", headers, body: JSON.stringify(body) });
+      if (!resp.ok && resp.status !== 202) throw new Error(`HTTP ${resp.status}`);
+      const session = resp.headers.get("mcp-session-id");
+      const text = await resp.text();
+      // Responses arrive as plain JSON or as a single-event SSE stream.
+      const data = text.startsWith("event:") || text.startsWith("data:")
+        ? text.split("\n").find((line) => line.startsWith("data:")).slice(5)
+        : text;
+      return { reply: text ? JSON.parse(data) : null, session };
+    };
+
+    (async () => {
+      const el = document.getElementById("mcp-status");
+      try {
+        const init = await rpc({
+          jsonrpc: "2.0", id: 1, method: "initialize",
+          params: {
+            protocolVersion: "2025-06-18", capabilities: {},
+            clientInfo: { name: "landing-page", version: "0" },
+          },
+        });
+        await rpc({ jsonrpc: "2.0", method: "notifications/initialized" }, init.session);
+        const tools = await rpc({ jsonrpc: "2.0", id: 2, method: "tools/list" }, init.session);
+        const names = tools.reply.result.tools.map((tool) => tool.name).join(", ");
+        el.textContent = `✓ ${init.reply.result.serverInfo.name} is up (tools: ${names})`;
+        await fetch("/mcp", { method: "DELETE", headers: { "mcp-session-id": init.session } });
+      } catch (err) {
+        el.textContent = `✗ ${err}`;
+      }
+    })();
+
+    // --- WebSocket echo/broadcast demo (see gobabygo/consumers.py).
+    const wsStatus = document.getElementById("ws-status");
+    const scheme = location.protocol === "https:" ? "wss" : "ws";
+    const sock = new WebSocket(`${scheme}://${location.host}/ws/echo`);
+    sock.onopen = () => { wsStatus.textContent = "✓ connected"; };
+    sock.onclose = () => { wsStatus.textContent = "✗ disconnected"; };
+    sock.onmessage = (event) => {
+      const item = document.createElement("li");
+      const message = JSON.parse(event.data);
+      item.textContent = message.text ?? event.data;
+      document.getElementById("ws-log").prepend(item);
+    };
+    document.getElementById("ws-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const input = document.getElementById("ws-input");
+      if (input.value) sock.send(JSON.stringify({ text: input.value }));
+      input.value = "";
+    });
+  </script>
 {% endblock %}

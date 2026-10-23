@@ -45,4 +45,6 @@ WORKDIR /opt/src
 
 RUN bash -c 'SECRET_KEY=dummy DJANGO_SETTINGS_MODULE=app.settings.production python manage.py collectstatic --no-input'
 
-CMD ["gunicorn", "--bind", ":8000", "--workers", "2", "app.wsgi"]
+# Single worker: MCP sessions are stateful and held in process memory. To run
+# more workers, set stateless_http=True in gobabygo/mcp.py or use sticky routing.
+CMD ["uvicorn", "app.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
