@@ -129,8 +129,7 @@ through nginx. Bootstrap guard tests run before bootstrapping with
 `python3 -m unittest discover -s dev -p 'test_*.py'`.
 
 Edit `requirements.in` and run `./dev/requirements.sh recompile` to regenerate the
-Python lock file. `pip<26` is pinned because pip-tools 7.x depends on the older pip
-internal API. Frontend installs use `npm ci`; production assets use `npm run build`.
+Python lock file. `pip-tools>=7.6.2` supports current pip releases. Frontend installs use `npm ci`; production assets use `npm run build`.
 
 ### Contributing
 
@@ -146,3 +145,10 @@ The intent of this template is to provide a starting point where things "just wo
 Secondary to that, the bootstrap script is intended to be a single path: it is not the intent to introduce an interactive or configurable process that produces a different result based on user choices, but instead produce one output that can be modified manually after the fact.
 
 Dependencies *do not follow LTS releases*. The intent is that dependencies, including Django itself, are up to date with the latest stable release wherever possible. If an important dependency becomes unmaintained or there are significant benefits to be had from an alternative, it should be replaced.
+
+Dependency update notes: Python 3.15 is used by both backend images. MCP 2 uses
+`MCPServer` and configures transport security on `streamable_http_app()`; the smoke
+clients use `httpx2`. Django remains on 6.0.x while django-celery-beat requires
+`Django<6.1`, and the Redis Python client follows Celery/Kombu's compatible range.
+PrimeVue 4.5.5, its theme package, and PrimeIcons 7 are deliberately retained and
+pinned to their MIT-licensed releases; later major releases require a license key.

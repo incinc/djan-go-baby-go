@@ -11,7 +11,7 @@ from pathlib import Path
 import sys
 from urllib.parse import urlsplit
 
-import httpx
+import httpx2 as httpx
 from mcp import ClientSession
 from mcp.client.streamable_http import streamable_http_client
 from websockets.asyncio.client import connect
@@ -48,9 +48,9 @@ async def main(base_url, token):
                 names = {tool.name for tool in (await session.list_tools()).tools}
                 assert names == {"hello", "user_count"}, names
                 hello = await session.call_tool("hello", {"name": "smoke"})
-                assert not hello.isError and "Hello, smoke!" in hello.content[0].text
+                assert not hello.is_error and "Hello, smoke!" in hello.content[0].text
                 count = await session.call_tool("user_count")
-                assert not count.isError and int(count.content[0].text) >= 0
+                assert not count.is_error and int(count.content[0].text) >= 0
         denied = await http.post(
             base_url + "/mcp", headers={"Host": "untrusted.invalid"}, json={}
         )

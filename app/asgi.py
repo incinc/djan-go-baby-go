@@ -20,11 +20,11 @@ from channels.auth import AuthMiddlewareStack  # noqa: E402
 from channels.routing import ProtocolTypeRouter, URLRouter  # noqa: E402
 from channels.security.websocket import AllowedHostsOriginValidator  # noqa: E402
 
-from gobabygo.mcp import mcp_server  # noqa: E402
+from gobabygo.mcp import mcp_server, transport_security  # noqa: E402
 from gobabygo.routing import websocket_urlpatterns  # noqa: E402
 
 # A Starlette app implementing the MCP streamable HTTP transport at /mcp.
-mcp_asgi_app = mcp_server.streamable_http_app()
+mcp_asgi_app = mcp_server.streamable_http_app(transport_security=transport_security)
 
 
 async def http_router(scope, receive, send):

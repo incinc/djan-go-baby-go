@@ -15,7 +15,7 @@ RUN npm run build
 
 ## Python app
 
-FROM python:3.14-slim-trixie
+FROM python:3.15-slim-trixie
 
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE=app.settings.production
@@ -46,5 +46,5 @@ WORKDIR /opt/src
 RUN bash -c 'SECRET_KEY=dummy DJANGO_SETTINGS_MODULE=app.settings.production python manage.py collectstatic --no-input'
 
 # Single worker: MCP sessions are stateful and held in process memory. To run
-# more workers, set stateless_http=True in gobabygo/mcp.py or use sticky routing.
+# more workers, set stateless_http=True in app/asgi.py or use sticky routing.
 CMD ["uvicorn", "app.asgi:application", "--host", "0.0.0.0", "--port", "8000"]

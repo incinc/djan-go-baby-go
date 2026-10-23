@@ -12,9 +12,10 @@ django-two-factor-auth[phonenumberslite]
 django-webpack-loader
 Django>=6.0,<7.0
 Jinja2
-mcp
-pip-tools
-pip<26  # pip-tools 7.x uses pip internals removed in pip 26
+httpx2
+mcp>=2,<3
+pip-tools>=7.6.2
+pip
 psycopg2
 pytest-django
 redis

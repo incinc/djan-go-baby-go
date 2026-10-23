@@ -7,7 +7,7 @@ from html.parser import HTMLParser
 from urllib.parse import parse_qs, urlsplit
 from uuid import uuid4
 
-import httpx
+import httpx2 as httpx
 from django.conf import settings
 from django.test import Client
 

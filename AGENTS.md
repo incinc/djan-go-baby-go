@@ -24,7 +24,7 @@ Do not copy local `.env`, `node_modules`, database files, or generated static as
 ## Development and verification
 
 Use Docker Compose in a bootstrapped copy for the supported environment (Python
-3.14, Node 26, PostgreSQL 18, Redis 8). Do not assume host Python/Node match.
+3.15, Node 26, PostgreSQL 18, Redis 8). Do not assume host Python/Node match.
 
 - `docker compose exec web python manage.py check`
 - `docker compose exec web python manage.py test`

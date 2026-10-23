@@ -1,6 +1,6 @@
-FROM python:3.14-slim-trixie
+FROM python:3.15-slim-trixie
 
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 WORKDIR /opt
 
 RUN apt-get update && apt-get install -y build-essential libpq-dev

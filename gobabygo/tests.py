@@ -151,7 +151,7 @@ class OAuthTests(TransactionTestCase):
         self.assertIsNone(self.verify("invalid"))
 
     def test_mcp_rejects_missing_scope_and_cookie_only_auth(self):
-        import httpx
+        import httpx2 as httpx
         from app.asgi import application
 
         raw = self.exchange(self.authorize()).json()["access_token"]

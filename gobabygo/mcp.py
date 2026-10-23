@@ -1,7 +1,7 @@
 from channels.db import database_sync_to_async
 from django.conf import settings
 from mcp.server.auth.settings import AuthSettings
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 from mcp.server.transport_security import TransportSecuritySettings
 
 from gobabygo.models import User
@@ -14,7 +14,7 @@ _hosts = [h for h in settings.ALLOWED_HOSTS if not h.startswith(".")] or [
     "localhost",
     "127.0.0.1",
 ]
-_transport_security = TransportSecuritySettings(
+transport_security = TransportSecuritySettings(
     enable_dns_rebinding_protection=True,
     allowed_hosts=[pattern for h in _hosts for pattern in (h, f"{h}:*")],
     allowed_origins=[
@@ -31,16 +31,16 @@ _transport_security = TransportSecuritySettings(
 # By default sessions are stateful, which enables the full MCP feature set
 # (server->client notifications, sampling, elicitation). Session state lives in
 # process memory: if you scale to multiple web workers, either enable sticky
-# routing or pass stateless_http=True here.
-mcp_server = FastMCP(
+# routing or pass stateless_http=True to streamable_http_app() in app/asgi.py.
+mcp_server = MCPServer(
     "gobabygo",
     instructions="Development quickstart MCP server for the gobabygo app.",
-    transport_security=_transport_security,
     token_verifier=DjangoTokenVerifier(),
     auth=AuthSettings(
         issuer_url=settings.BASE_URL,
         resource_server_url=settings.MCP_RESOURCE_URL,
         required_scopes=["mcp"],
+        validate_token_resource=True,
     ),
 )
 
