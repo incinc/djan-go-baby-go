@@ -1,8 +1,11 @@
+from channels.db import database_sync_to_async
 from django.conf import settings
+from mcp.server.auth.settings import AuthSettings
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
 
 from gobabygo.models import User
+from gobabygo.oauth import DjangoTokenVerifier
 
 # DNS rebinding protection: the transport validates Host/Origin headers, so
 # reuse Django's ALLOWED_HOSTS. (The MCP matcher doesn't understand Django's
@@ -33,6 +36,12 @@ mcp_server = FastMCP(
     "gobabygo",
     instructions="Development quickstart MCP server for the gobabygo app.",
     transport_security=_transport_security,
+    token_verifier=DjangoTokenVerifier(),
+    auth=AuthSettings(
+        issuer_url=settings.BASE_URL,
+        resource_server_url=settings.MCP_RESOURCE_URL,
+        required_scopes=["mcp"],
+    ),
 )
 
 
@@ -44,5 +53,7 @@ def hello(name: str = "world") -> str:
 
 @mcp_server.tool()
 async def user_count() -> int:
-    """Count registered users, demonstrating async ORM access from a tool."""
-    return await User.objects.acount()
+    """Count registered users, demonstrating safe database access from an async tool."""
+    # MCP bypasses Django's request lifecycle. Close ORM connections after
+    # each call, including failures, rather than retaining them in SDK threads.
+    return await database_sync_to_async(User.objects.count)()

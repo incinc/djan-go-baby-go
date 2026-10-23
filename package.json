@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "start": "HOT_RELOAD=1 /opt/node_modules/webpack-dev-server/bin/webpack-dev-server.js --mode development --config webpack.config.js --host=0.0.0.0",
-    "build": "NODE_ENV=production SOURCE_VERSION=$(git rev-parse HEAD) /opt/node_modules/webpack-cli/bin/cli.js --mode production --config webpack.config.js"
+    "start": "HOT_RELOAD=1 webpack serve --mode development --config webpack.config.js --host=0.0.0.0",
+    "build": "NODE_ENV=production SOURCE_VERSION=${SOURCE_VERSION:-unknown} webpack --mode production --config webpack.config.js"
   },
   "devDependencies": {
     "@babel/core": "^8.0.1",

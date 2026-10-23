@@ -27,36 +27,15 @@
   </ul>
 
   <script>
-    // --- MCP status: run a real handshake against the streamable HTTP endpoint.
-    const rpc = async (body, sessionId) => {
-      const headers = { "Content-Type": "application/json", "Accept": "application/json, text/event-stream" };
-      if (sessionId) headers["mcp-session-id"] = sessionId;
-      const resp = await fetch("/mcp", { method: "POST", headers, body: JSON.stringify(body) });
-      if (!resp.ok && resp.status !== 202) throw new Error(`HTTP ${resp.status}`);
-      const session = resp.headers.get("mcp-session-id");
-      const text = await resp.text();
-      // Responses arrive as plain JSON or as a single-event SSE stream.
-      const data = text.startsWith("event:") || text.startsWith("data:")
-        ? text.split("\n").find((line) => line.startsWith("data:")).slice(5)
-        : text;
-      return { reply: text ? JSON.parse(data) : null, session };
-    };
-
+    // A 401 challenge is the expected healthy response before OAuth login.
     (async () => {
       const el = document.getElementById("mcp-status");
       try {
-        const init = await rpc({
-          jsonrpc: "2.0", id: 1, method: "initialize",
-          params: {
-            protocolVersion: "2025-06-18", capabilities: {},
-            clientInfo: { name: "landing-page", version: "0" },
-          },
-        });
-        await rpc({ jsonrpc: "2.0", method: "notifications/initialized" }, init.session);
-        const tools = await rpc({ jsonrpc: "2.0", id: 2, method: "tools/list" }, init.session);
-        const names = tools.reply.result.tools.map((tool) => tool.name).join(", ");
-        el.textContent = `✓ ${init.reply.result.serverInfo.name} is up (tools: ${names})`;
-        await fetch("/mcp", { method: "DELETE", headers: { "mcp-session-id": init.session } });
+        const resp = await fetch("/mcp", { headers: { Accept: "text/event-stream" } });
+        if (resp.status !== 401 || !resp.headers.get("WWW-Authenticate")?.includes("resource_metadata")) {
+          throw new Error(`unexpected HTTP ${resp.status}`);
+        }
+        el.textContent = "✓ ready (OAuth login required in your MCP client)";
       } catch (err) {
         el.textContent = `✗ ${err}`;
       }
@@ -77,7 +56,7 @@
     document.getElementById("ws-form").addEventListener("submit", (event) => {
       event.preventDefault();
       const input = document.getElementById("ws-input");
-      if (input.value) sock.send(JSON.stringify({ text: input.value }));
+      if (input.value && sock.readyState === WebSocket.OPEN) sock.send(JSON.stringify({ text: input.value }));
       input.value = "";
     });
   </script>

@@ -4,8 +4,11 @@ In less than three minutes this will set up a fully functional rapid application
 The only requirement is [Docker](https://docs.docker.com/desktop/). Make a copy of this template repo, then run:
 
 ```bash
-./bootstrap.sh <my project name>
+./bootstrap.sh myproject
 ```
+
+Use a lowercase project name starting with a letter (letters, digits, and underscores only).
+Pass `-d` to start Compose in the background. Bootstrap edits this copy in place.
 
 The bootstrap script will:
 - Rename everything in the project from `gobabygo` to your project name.
@@ -32,6 +35,7 @@ This is an opinionated template that brings together a number of other tools and
 - [Django](https://docs.djangoproject.com/en/6.0/) with [Jinja2](https://jinja.palletsprojects.com/en/3.1.x/)
 - [Django Ninja](https://django-ninja.dev/)
 - [Channels](https://channels.readthedocs.io/en/latest/) WebSockets, backed by the Redis channel layer
+- [Django OAuth Toolkit](https://django-oauth-toolkit.readthedocs.io/) with PKCE, consent, and dynamic client registration
 - [MCP server](https://modelcontextprotocol.io/) at `/mcp`, built on the [official python SDK](https://github.com/modelcontextprotocol/python-sdk)
 - [Celery](https://docs.celeryq.dev/en/stable/getting-started/introduction.html) (with [Beat](https://django-celery-beat.readthedocs.io/en/latest/))
 - [pytest](https://docs.pytest.org/en/7.4.x/)
@@ -45,6 +49,88 @@ This is an opinionated template that brings together a number of other tools and
 #### Services
 - [Sentry](https://docs.sentry.io/platforms/python/integrations/django/)
 - [Stripe](https://stripe.com/docs/api?lang=python)
+
+### WebSockets and MCP
+
+Open http://localhost:8888/ in two tabs to try the public WebSocket broadcast at
+`/ws/echo`. Django session cookies identify logged-in users; the demo intentionally
+allows anonymous users to send and receive messages in the same group.
+
+The MCP endpoint is `http://localhost:8888/mcp`. It requires an OAuth bearer token
+with the `mcp` scope and that exact URL as its resource/audience. Create a user for
+the login and consent flow:
+
+```bash
+docker compose exec web python manage.py createsuperuser
+```
+
+Point an OAuth-capable MCP client at the endpoint, for example:
+
+```bash
+claude mcp add --transport http myproject http://localhost:8888/mcp
+```
+
+The client discovers the authorization server, registers itself, and opens Django's
+login and consent pages. Approve access to the MCP tools, then try `hello` or
+`user_count`. No client ID or secret needs to be copied from the admin. The landing
+page checks the OAuth challenge; it does not store a token or bypass authorization.
+
+The relevant endpoints are:
+
+| Endpoint | Purpose |
+| --- | --- |
+| `/.well-known/oauth-protected-resource/mcp` | MCP resource and authorization server discovery |
+| `/.well-known/oauth-authorization-server` | OAuth endpoints and PKCE capabilities |
+| `/o/register/` | Dynamic client registration (RFC 7591) |
+| `/o/authorize/` | Django login and user consent |
+| `/o/token/` | Authorization-code exchange and refresh |
+| `/o/revoke_token/` | Token revocation |
+| `/o/authorized_tokens/` | User interface to revoke authorized tokens |
+
+OAuth clients must use authorization code + S256 PKCE, request the `mcp` scope,
+and include `resource=http://localhost:8888/mcp` in authorization/token requests.
+Dynamic registration accepts authorization-code clients with HTTPS or HTTP loopback
+callbacks only. Refresh tokens rotate. Access tokens expire after an hour, are stored as checksums,
+and are checked against the database on each MCP request. Registration credentials,
+expired/revoked tokens, inactive users, and tokens for other resources are rejected.
+Django session cookies alone do not authorize MCP calls.
+
+For deployment, set `BASE_URL` to the canonical public HTTPS origin and configure
+explicit `ALLOWED_HOSTS` in the deployment settings. OAuth discovery and token
+audiences depend on that origin; a client using a different host will not match it.
+Configure the trusted reverse proxy/HTTPS settings for your deployment. MCP is a
+separate ASGI app and does not pass through Django's security middleware.
+Dynamic registration is open so clients can bootstrap without pre-issued credentials;
+apply registration rate limits at your public proxy or change
+`DCR_REGISTRATION_PERMISSION_CLASSES` for a restricted deployment. Registering a
+client does not grant it a user's access. Use `cleartokens` periodically to remove
+expired OAuth credentials.
+
+MCP sessions are stateful and held in one web process. Keep one Uvicorn worker, or
+switch to stateless MCP / sticky routing before scaling. The standalone production
+image defaults to `app.settings.production`; the Compose stack explicitly uses the
+development settings from `.env`.
+
+### Testing and dependency updates
+
+Run bootstrap in a disposable copy so the template remains intact. Once running:
+
+```bash
+docker compose exec web python manage.py check
+docker compose exec web python manage.py test --noinput
+docker compose exec web python dev/smoke_test.py
+docker build -t myproject-production .
+```
+
+The live smoke test creates and removes a temporary user and OAuth client; run it
+against a disposable database. It exercises discovery, registration, consent, MCP
+tools, revocation, frontend assets, two-client Redis broadcasts, and origin checks
+through nginx. Bootstrap guard tests run before bootstrapping with
+`python3 -m unittest discover -s dev -p 'test_*.py'`.
+
+Edit `requirements.in` and run `./dev/requirements.sh recompile` to regenerate the
+Python lock file. `pip<26` is pinned because pip-tools 7.x depends on the older pip
+internal API. Frontend installs use `npm ci`; production assets use `npm run build`.
 
 ### Contributing
 

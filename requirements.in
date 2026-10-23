@@ -6,6 +6,7 @@ dj_database_url
 django-celery-beat
 django-jinja
 django-ninja
+django-oauth-toolkit>=3.4,<4
 django-sesame
 django-two-factor-auth[phonenumberslite]
 django-webpack-loader
@@ -13,6 +14,7 @@ Django>=6.0,<7.0
 Jinja2
 mcp
 pip-tools
+pip<26  # pip-tools 7.x uses pip internals removed in pip 26
 psycopg2
 pytest-django
 redis

@@ -3,27 +3,48 @@ name: Test Bootstrapping
 on:
   push:
     branches: [main]
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 20
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-    - name: Run bootstrap script
-      run: |
-        ./bootstrap.sh myapp -d
-        sleep 90
+      - name: Check bootstrap validation and failure handling
+        run: python3 -m unittest discover -s dev -p 'test_*.py'
 
-    - name: Check server response
-      run: |
-        docker ps -q | xargs -i% docker logs %
-        RESPONSE_CODE=$(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8888/)
-        if [ "$RESPONSE_CODE" -ne "200" ]
-        then
-          echo "The server did not return a 200 response code. Exiting with status 1."
+      - name: Bootstrap a disposable copy
+        run: |
+          mkdir -p "$RUNNER_TEMP/quickstart"
+          git archive HEAD | tar -x -C "$RUNNER_TEMP/quickstart"
+          cd "$RUNNER_TEMP/quickstart"
+          ./bootstrap.sh myapp -d
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://localhost:8888/ >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
           exit 1
-        else
-          echo "The server returned a 200 response code. Test success."
-        fi
+
+      - name: Django and live protocol tests
+        working-directory: ${{ runner.temp }}/quickstart
+        run: |
+          docker compose exec -T web python manage.py check
+          docker compose exec -T web python manage.py test --noinput
+          docker compose exec -T web python dev/smoke_test.py
+
+      - name: Build production image
+        working-directory: ${{ runner.temp }}/quickstart
+        run: docker build -t quickstart-production .
+
+      - name: Logs and cleanup
+        if: always()
+        working-directory: ${{ runner.temp }}/quickstart
+        run: |
+          if [ -f .env ]; then
+            docker compose logs --tail=100
+            docker compose down -v --remove-orphans
+          fi

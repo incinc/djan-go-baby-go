@@ -3,7 +3,7 @@
 <head>
   {% block head %}
     <meta name="ENVIRONMENT" value="{{ settings.ENVIRONMENT }}">
-    <meta name="ENVIRONMENT" value="{{ settings.SENTRY_DSN }}">
+    <meta name="SENTRY_DSN" value="{{ settings.SENTRY_DSN }}">
     {{ render_bundle('app', 'css') }}
   {% endblock %}
 </head>

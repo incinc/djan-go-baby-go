@@ -14,20 +14,28 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, re_path, include
+
+from oauth2_provider.urls import metadata_urlpatterns
 
 from two_factor.urls import urlpatterns as tf_urls
 
 import gobabygo.views
 from gobabygo.api import api
 
-
 urlpatterns = [
-    path('', gobabygo.views.index, name='index'),
-    re_path('^vue', gobabygo.views.vue_index), # suburls routed with vue-router in app.js
-    path('api/', api.urls),
-    path('', include(tf_urls)),
-
+    path(
+        "",
+        include((metadata_urlpatterns, "oauth2_provider"), namespace="oauth2_metadata"),
+    ),
+    path("o/", include("app.oauth_urls", namespace="oauth2_provider")),
+    path("", gobabygo.views.index, name="index"),
+    re_path(
+        "^vue", gobabygo.views.vue_index
+    ),  # suburls routed with vue-router in app.js
+    path("api/", api.urls),
+    path("", include(tf_urls)),
     path("admin/", admin.site.urls),
 ]

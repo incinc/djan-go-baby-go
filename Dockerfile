@@ -1,24 +1,24 @@
-FROM node:26-trixie as webpack
+FROM node:26-trixie AS webpack
 
 WORKDIR /opt
 
 COPY package.json package.json
 COPY package-lock.json package-lock.json
 
-COPY ./vendor/ /opt/src/vendor/
-
 RUN npm ci
 
 COPY . /opt/src/
 
 WORKDIR /opt/src
-RUN npm run-script build-docker
+ENV PATH="/opt/node_modules/.bin:${PATH}"
+RUN npm run build
 
 ## Python app
 
 FROM python:3.14-slim-trixie
 
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
+ENV DJANGO_SETTINGS_MODULE=app.settings.production
 WORKDIR /opt
 
 RUN apt-get update && apt-get install -y libpq-dev build-essential

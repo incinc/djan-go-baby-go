@@ -21,8 +21,8 @@ class EchoConsumer(AsyncJsonWebsocketConsumer):
     group = "broadcast"
 
     async def connect(self):
-        await self.accept()
         await self.channel_layer.group_add(self.group, self.channel_name)
+        await self.accept()
         # AuthMiddlewareStack (see app/asgi.py) resolves the Django session
         # cookie, so authenticated users are identified here automatically.
         await self.send_json({"text": f"connected as {self.scope['user']}"})
