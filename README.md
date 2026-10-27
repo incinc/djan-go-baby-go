@@ -128,8 +128,33 @@ tools, revocation, frontend assets, two-client Redis broadcasts, and origin chec
 through nginx. Bootstrap guard tests run before bootstrapping with
 `python3 -m unittest discover -s dev -p 'test_*.py'`.
 
-Edit `requirements.in` and run `./dev/requirements.sh recompile` to regenerate the
-Python lock file. `pip-tools>=7.6.2` supports current pip releases. Frontend installs use `npm ci`; production assets use `npm run build`.
+Python dependencies live in `pyproject.toml` and `uv.lock`. Both Dockerfiles use
+uv 0.13.5 and `uv sync --locked`, with a cached dependency layer before the source
+copy and a BuildKit download cache for changed dependencies. Production excludes
+the `dev` dependency group (Black and pytest); Compose includes it. The container
+virtual environment lives at `/opt/venv` so the source bind mount cannot hide it.
+
+With uv installed locally, use `uv add`, `uv remove`, `uv lock --upgrade`, and
+`uv sync --locked`. `.python-version` selects Python 3.15. Alternatively, after
+bootstrap, use the Docker-only helper:
+
+```bash
+./dev/uv.sh add --no-sync some-package
+./dev/uv.sh add --dev --no-sync some-dev-tool
+./dev/uv.sh remove --no-sync some-package
+./dev/uv.sh lock --upgrade
+# Rebuild and recreate both Python services after dependency changes:
+docker compose up -d --build web worker
+```
+
+Commit both `pyproject.toml` and `uv.lock`. `uv lock` refreshes the lock after manual
+manifest edits without upgrading already locked versions; `uv lock --upgrade`
+updates dependencies. Builds fail when the manifest and lock disagree.
+Existing `docker compose exec web python ...` commands use the container venv
+without an extra `uv run` step. Locally, use `uv run python manage.py ...` with
+your database and environment configured.
+
+Frontend installs use `npm ci`; production assets use `npm run build`.
 
 ### Contributing
 

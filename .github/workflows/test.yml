@@ -32,6 +32,8 @@ jobs:
       - name: Django and live protocol tests
         working-directory: ${{ runner.temp }}/quickstart
         run: |
+          docker compose exec -T web uv lock --check
+          docker compose exec -T web uv pip check --python /opt/venv/bin/python
           docker compose exec -T web python manage.py check
           docker compose exec -T web python manage.py test --noinput
           docker compose exec -T web python dev/smoke_test.py

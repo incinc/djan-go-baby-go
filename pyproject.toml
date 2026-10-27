@@ -1,0 +1,35 @@
+[project]
+name = "gobabygo"
+version = "0.1.0"
+description = "Django, Vue, WebSocket, and MCP quickstart"
+requires-python = ">=3.15"
+dependencies = [
+    "celery[redis]",
+    "channels",
+    "channels-redis",
+    "dj_database_url",
+    "django-celery-beat",
+    "django-jinja",
+    "django-ninja",
+    "django-oauth-toolkit>=3.4,<4",
+    "django-sesame",
+    "django-two-factor-auth[phonenumberslite]",
+    "django-webpack-loader",
+    "Django>=6.0,<7.0",
+    "Jinja2",
+    "httpx2",
+    "mcp>=2,<3",
+    "psycopg2",
+    "redis",
+    "sentry-sdk[django]",
+    "social-auth-app-django",
+    "stripe",
+    "uvicorn[standard]",
+    "whitenoise",
+]
+
+[dependency-groups]
+dev = ["black", "pytest-django"]
+
+[tool.uv]
+package = false

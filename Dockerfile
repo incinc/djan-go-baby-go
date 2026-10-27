@@ -17,7 +17,13 @@ RUN npm run build
 
 FROM python:3.15-slim-trixie
 
+COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /uvx /usr/local/bin/
+
 ENV PYTHONUNBUFFERED=1
+ENV UV_PROJECT_ENVIRONMENT=/opt/venv \
+    UV_PYTHON_DOWNLOADS=never \
+    UV_LINK_MODE=copy \
+    PATH="/opt/venv/bin:${PATH}"
 ENV DJANGO_SETTINGS_MODULE=app.settings.production
 WORKDIR /opt
 
@@ -30,12 +36,15 @@ RUN groupadd -r appuser -g $gid \
   && chown -R root:appuser /opt/ \
   && chmod g+w /opt/
 
+# Install from the lock before copying source, so source edits reuse this layer.
+# The venv stays outside /opt/src, which Compose replaces with a bind mount.
+WORKDIR /opt/src
+COPY pyproject.toml uv.lock .python-version ./
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-dev \
+    && chown -R appuser:appuser /opt/venv /opt/src
+
 USER appuser
-ENV PATH="/home/appuser/.local/bin:${PATH}"
-
-COPY --chown=appuser:appuser requirements.txt /opt/requirements.txt
-
-RUN pip install -r /opt/requirements.txt
 
 COPY --chown=appuser:appuser . /opt/src/
 COPY --chown=appuser:appuser --from=webpack /opt/src/static/dist/ /opt/src/static/dist

@@ -41,9 +41,12 @@ when changing routing, bootstrap, or protocol handling. CI lives in
 
 ## Dependencies and conventions
 
-Python dependencies are declared in `requirements.in` and pinned by pip-tools
-in `requirements.txt`; use `./dev/requirements.sh recompile` in the Docker
-environment. Keep `package.json` and `package-lock.json` consistent; use `npm ci`
+Python dependencies are declared in `pyproject.toml` and locked in `uv.lock`.
+Use `uv add`/`uv remove` and `uv lock --upgrade`, or the Docker-only `./dev/uv.sh`
+wrapper in a bootstrapped copy. Commit both files. Black and pytest live in the
+`dev` dependency group, excluded from production. Docker builds use pinned uv
+and `uv sync --locked`; `/opt/venv` stays outside the source bind mount. Rebuild
+and recreate web and worker after dependency changes. Keep `package.json` and `package-lock.json` consistent; use `npm ci`
 for reproducible installs. Dependencies track stable releases, not LTS.
 
 Keep sync Django views where appropriate; use async ORM methods in async MCP
