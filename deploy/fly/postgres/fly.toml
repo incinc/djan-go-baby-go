@@ -1,0 +1,23 @@
+# Private-only, self-managed PostgreSQL. Use Managed Postgres for HA and backups.
+kill_signal = "SIGINT"
+kill_timeout = "60s"
+
+[build]
+  image = "postgres:18"
+
+[env]
+  POSTGRES_USER = "appuser"
+  POSTGRES_DB = "app"
+
+[deploy]
+  strategy = "immediate"
+
+# PostgreSQL 18 stores its version-specific data directory beneath this mount.
+[[mounts]]
+  source = "postgres_data"
+  destination = "/var/lib/postgresql"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory = "512mb"

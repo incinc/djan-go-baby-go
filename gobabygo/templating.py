@@ -13,6 +13,7 @@ def environment(**options):
             "url": reverse,
             "settings": {
                 "ENVIRONMENT": settings.ENVIRONMENT,
+                "SENTRY_DSN": settings.SENTRY_DSN or "",
             },
         }
     )

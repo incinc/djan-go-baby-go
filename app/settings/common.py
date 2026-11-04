@@ -15,7 +15,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-BASE_URL = os.environ.get("BASE_URL")
+BASE_URL = os.environ.get("BASE_URL", "http://localhost:8888").rstrip("/")
+MCP_RESOURCE_URL = f"{BASE_URL}/mcp"
 
 AUTH_USER_MODEL = "gobabygo.User"
 
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "celery",
+    "channels",
+    "oauth2_provider",
     "django_celery_beat",
     "webpack_loader",
     "social_django",
@@ -98,8 +101,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = "app.wsgi.application"
 
 DATABASES = {}
 
@@ -164,7 +165,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("gobabygo-redis-1", 6379)],
+            "hosts": [os.environ.get("REDIS_URL", "redis://localhost:6379")],
         },
     },
 }
@@ -180,3 +181,36 @@ SOCIAL_AUTH_PIPELINE = (
     "social_core.pipeline.social_auth.load_extra_data",
     "social_core.pipeline.user.user_details",
 )
+
+
+# OAuth authorization-code flow for MCP clients. DCR creates client records;
+# it does not grant access: users must log in and approve the requested scopes.
+OAUTH2_PROVIDER = {
+    "SCOPES": {"mcp": "Use the MCP tools"},
+    "DEFAULT_SCOPES": ["mcp"],
+    "OIDC_ISS_ENDPOINT": BASE_URL,
+    "OAUTH2_PROTECTED_RESOURCE_IDENTIFIER": MCP_RESOURCE_URL,
+    "OAUTH2_PROTECTED_RESOURCE_AUTHORIZATION_SERVERS": [BASE_URL],
+    "DCR_ENABLED": True,
+    "DCR_REGISTRATION_PERMISSION_CLASSES": [
+        "oauth2_provider.dcr.AllowAllDCRPermission"
+    ],
+    "PKCE_REQUIRED": True,
+    "COMPLIANT_BCP_RFC9700_PKCE_METHOD": True,
+    "COMPLIANT_BCP_RFC9700_IMPLICIT_GRANT": True,
+    "COMPLIANT_BCP_RFC9700_PASSWORD_GRANT": True,
+    "COMPLIANT_BCP_RFC9700_ACCESS_TOKEN_TRANSPORT": True,
+    "COMPLIANT_BCP_RFC9700_TOKEN_STORAGE": True,
+    "COMPLIANT_BCP_RFC9700_AUTHZ_RESPONSE_ISS": True,
+    "ROTATE_REFRESH_TOKEN": True,
+    "REFRESH_TOKEN_REUSE_PROTECTION": True,
+    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,
+    "REFRESH_TOKEN_EXPIRE_SECONDS": 30 * 24 * 60 * 60,
+    "OAUTH2_RESPONSE_TYPES_SUPPORTED": ["code"],
+    "OAUTH2_GRANT_TYPES_SUPPORTED": ["authorization_code", "refresh_token"],
+    "OAUTH2_TOKEN_ENDPOINT_AUTH_METHODS_SUPPORTED": [
+        "none",
+        "client_secret_basic",
+        "client_secret_post",
+    ],
+}

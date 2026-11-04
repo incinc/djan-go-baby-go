@@ -1,12 +1,14 @@
 #!/usr/bin/env sh
 
+set -eu
+
 # Ensure Docker is available
 if ! command -v docker >/dev/null 2>&1; then
     echo "Docker is required but not installed. Please install Docker first."
     exit 1
 fi
 
-PROJECT="$1"
+PROJECT="${1:-}"
 
 if [ -z "$PROJECT" ]; then
     echo "Usage: $0 <project_name>"
@@ -14,19 +16,31 @@ if [ -z "$PROJECT" ]; then
 fi
 
 # Validate project name is a valid Python identifier
-if ! echo "$PROJECT" | grep -qE '^[a-zA-Z0-9_]+$'; then
-    echo "$PROJECT is not a valid Python identifier. Only alphanumeric characters and underscores are allowed."
+if ! echo "$PROJECT" | grep -qE '^[a-z][a-z0-9_]*$'; then
+    echo "$PROJECT is not a valid Python identifier. Use lowercase letters, digits and underscores, starting with a letter."
+    exit 1
+fi
+
+# Reject Python keywords and names that collide with template directories/modules.
+case "$PROJECT" in
+    app|frontend|dev|static|templates|test|django|channels|mcp|celery|asgi|os|sys|keyword|abc|typing|json|asyncio|email|http|logging|collections|importlib|and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield)
+        echo "$PROJECT is a reserved project name."
+        exit 1
+        ;;
+esac
+if [ "$PROJECT" != gobabygo ] && [ -e "$PROJECT" ]; then
+    echo "$PROJECT already exists; choose a different project name."
     exit 1
 fi
 
 # Run the bootstrap process in a container
-docker run --rm -v "$(pwd):/work" -w /work alpine:3.24 sh -c "
+docker run --rm -v "$(pwd):/work" -w /work alpine:3.24 sh -ec "
     # Install required tools
     apk add --no-cache gettext
 
     # Validate project name
-    if ! echo '$PROJECT' | grep -qE '^[a-zA-Z0-9_]+$'; then
-        echo '$PROJECT is not a valid Python identifier. Only alphanumeric characters and underscores are allowed.'
+    if ! echo '$PROJECT' | grep -qE '^[a-z][a-z0-9_]*$'; then
+        echo '$PROJECT is not a valid Python identifier. Use lowercase letters, digits and underscores, starting with a letter.'
         exit 1
     fi
 
@@ -46,7 +60,7 @@ docker run --rm -v "$(pwd):/work" -w /work alpine:3.24 sh -c "
     fi
 
     # Replace all instances of gobabygo with new project name
-    find ./ -type f -not -path '*/.git/*' -exec sed -i \"s/gobabygo/$PROJECT/gI\" {} +
+    find ./ \( -name .git -o -name node_modules -o -name .venv -o -name __pycache__ -o -path ./static \) -prune -o -type f -exec sed -i \"s/gobabygo/$PROJECT/gI\" {} +
 
     # Cleanup template files
     rm -f ./.env.tmpl ./bootstrap.sh ./LICENSE
@@ -54,6 +68,7 @@ docker run --rm -v "$(pwd):/work" -w /work alpine:3.24 sh -c "
 
 # Build and start the application
 docker compose build --build-arg uid=$(id -u) --build-arg gid=$(id -g)
-docker compose run web bash -c \
+docker compose run --rm web bash -c \
     "python3 manage.py makemigrations && python3 manage.py migrate"
-docker compose up $2
+shift
+docker compose up "$@"

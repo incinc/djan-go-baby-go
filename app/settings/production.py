@@ -4,7 +4,7 @@ from app.settings.common import *
 
 sentry_sdk.init(dsn=SENTRY_DSN, environment="prd")
 
-DATABASES["default"] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+DATABASES = {"default": dj_database_url.config(conn_max_age=0, ssl_require=True)}
 
 ENVIRONMENT = "prd"
 

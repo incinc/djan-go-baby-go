@@ -8,5 +8,56 @@
     <li><a href="/vue/test">Vue-router base</a></li>
     <li><a href="/api/whoami">API</a></li>
     <li><a href="/admin">Admin</a></li>
+    <li>
+      MCP server at <code>/mcp</code> &mdash; <span id="mcp-status">checking&hellip;</span>
+      <br>
+      <small>
+        connect a client with:
+        <code>claude mcp add --transport http gobabygo {{ request.build_absolute_uri('/mcp') }}</code>
+      </small>
+    </li>
+    <li>
+      WebSockets at <code>/ws/echo</code> &mdash; <span id="ws-status">connecting&hellip;</span>
+      <form id="ws-form">
+        <input id="ws-input" placeholder="broadcast a message (try two tabs)">
+        <button>Send</button>
+      </form>
+      <ul id="ws-log"></ul>
+    </li>
   </ul>
+
+  <script>
+    // A 401 challenge is the expected healthy response before OAuth login.
+    (async () => {
+      const el = document.getElementById("mcp-status");
+      try {
+        const resp = await fetch("/mcp", { headers: { Accept: "text/event-stream" } });
+        if (resp.status !== 401 || !resp.headers.get("WWW-Authenticate")?.includes("resource_metadata")) {
+          throw new Error(`unexpected HTTP ${resp.status}`);
+        }
+        el.textContent = "✓ ready (OAuth login required in your MCP client)";
+      } catch (err) {
+        el.textContent = `✗ ${err}`;
+      }
+    })();
+
+    // --- WebSocket echo/broadcast demo (see gobabygo/consumers.py).
+    const wsStatus = document.getElementById("ws-status");
+    const scheme = location.protocol === "https:" ? "wss" : "ws";
+    const sock = new WebSocket(`${scheme}://${location.host}/ws/echo`);
+    sock.onopen = () => { wsStatus.textContent = "✓ connected"; };
+    sock.onclose = () => { wsStatus.textContent = "✗ disconnected"; };
+    sock.onmessage = (event) => {
+      const item = document.createElement("li");
+      const message = JSON.parse(event.data);
+      item.textContent = message.text ?? event.data;
+      document.getElementById("ws-log").prepend(item);
+    };
+    document.getElementById("ws-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const input = document.getElementById("ws-input");
+      if (input.value && sock.readyState === WebSocket.OPEN) sock.send(JSON.stringify({ text: input.value }));
+      input.value = "";
+    });
+  </script>
 {% endblock %}
