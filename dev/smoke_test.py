@@ -1,7 +1,8 @@
-"""Exercise the running Compose stack through nginx (no extra dependencies).
+"""Exercise a disposable Compose stack or deployed application.
 
 Run: docker compose exec web python dev/smoke_test.py
 Optional first argument: base URL (defaults to http://proxy).
+SMOKE_CA_BUNDLE may name a CA file for a local HTTPS test proxy.
 """
 
 import asyncio
@@ -20,17 +21,25 @@ from websockets.exceptions import InvalidStatus
 
 async def main(base_url, token):
     # Connect using Compose DNS, but present the same Host/Origin as a browser.
-    headers = {"Host": "localhost:8888"}
-    async with httpx.AsyncClient(headers=headers, timeout=10, trust_env=False) as http:
+    from django.conf import settings
+
+    headers = {"Host": urlsplit(settings.BASE_URL).netloc}
+    origin = settings.BASE_URL
+    async with httpx.AsyncClient(
+        headers=headers,
+        timeout=10,
+        trust_env=False,
+        verify=os.environ.get("SMOKE_CA_BUNDLE", True),
+    ) as http:
         for path in ("/", "/vue/test", "/admin/login/"):
             response = await http.get(base_url + path, follow_redirects=True)
             response.raise_for_status()
             assert response.status_code == 200, (path, response.status_code)
-        # Vue page must render actual bundle URLs, and nginx must serve them.
+        # Vue page must render actual bundle URLs, served by nginx or WhiteNoise.
         import re
 
         assets = re.findall(
-            r'(?:src|href)="(/webpack-dist/[^" ]+)"',
+            r'(?:src|href)="(/(?:webpack-dist|static)/[^" ]+)"',
             (await http.get(base_url + "/vue/test")).text,
         )
         assert assets, "Vue page has no bundled assets"
@@ -54,7 +63,11 @@ async def main(base_url, token):
         denied = await http.post(
             base_url + "/mcp", headers={"Host": "untrusted.invalid"}, json={}
         )
-        assert denied.status_code == 421, denied.status_code
+        # A public edge may reject the unknown Host before it reaches MCP.
+        if urlsplit(base_url).scheme == "https":
+            assert 400 <= denied.status_code < 600, denied.status_code
+        else:
+            assert denied.status_code == 421, denied.status_code
         denied = await http.post(
             base_url + "/mcp", headers={"Origin": "https://untrusted.invalid"}, json={}
         )
@@ -64,17 +77,24 @@ async def main(base_url, token):
     ws_url = (
         f"{'wss' if address.scheme == 'https' else 'ws'}://{address.netloc}/ws/echo"
     )
-    async with connect(ws_url, origin="http://localhost:8888", proxy=None) as first:
-        async with connect(
-            ws_url, origin="http://localhost:8888", proxy=None
-        ) as second:
+    import ssl
+
+    ws_options = {}
+    if address.scheme == "https":
+        ws_options["ssl"] = ssl.create_default_context(
+            cafile=os.environ.get("SMOKE_CA_BUNDLE")
+        )
+    async with connect(ws_url, origin=origin, proxy=None, **ws_options) as first:
+        async with connect(ws_url, origin=origin, proxy=None, **ws_options) as second:
             for socket in (first, second):
                 assert "connected as" in json.loads(await socket.recv())["text"]
             await first.send(json.dumps({"text": "broadcast smoke"}))
             for socket in (first, second):
                 assert json.loads(await socket.recv()) == {"text": "broadcast smoke"}
     try:
-        async with connect(ws_url, origin="https://untrusted.invalid", proxy=None):
+        async with connect(
+            ws_url, origin="https://untrusted.invalid", proxy=None, **ws_options
+        ):
             raise AssertionError("Untrusted WebSocket origin was accepted")
     except InvalidStatus as exc:
         assert exc.response.status_code == 403

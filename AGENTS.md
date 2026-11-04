@@ -16,6 +16,9 @@ Do not copy local `.env`, `node_modules`, database files, or generated static as
 - `gobabygo/`: custom User/Profile models, views, Jinja templates, API, MCP tools,
   and WebSocket consumers/routing. `oauth.py` adapts OAuth Toolkit tokens to MCP. Preserve renameability of this package.
 - `frontend/app/`: Vue 3, Router, Pinia, PrimeVue, and CSS; bundled by Webpack.
+- `deploy/fly/`: Fly app/process configuration, persistent private Redis/Postgres,
+  and deployment instructions. `app.settings.fly` derives the canonical HTTPS
+  origin before OAuth settings load. Keep one web and one Beat Machine by default.
 - `docker-compose.yaml`: development proxy, web, Celery worker/Beat, Webpack,
   PostgreSQL, and Redis. `dev/nginx.conf` proxies HTTP, SSE, and WebSocket upgrades.
 - `app/Dockerfile` and `frontend/Dockerfile`: development images.

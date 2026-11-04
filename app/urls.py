@@ -22,10 +22,13 @@ from oauth2_provider.urls import metadata_urlpatterns
 
 from two_factor.urls import urlpatterns as tf_urls
 
+from app.health import health
+
 import gobabygo.views
 from gobabygo.api import api
 
 urlpatterns = [
+    path("health/", health, name="health"),
     path(
         "",
         include((metadata_urlpatterns, "oauth2_provider"), namespace="oauth2_metadata"),

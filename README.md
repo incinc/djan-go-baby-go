@@ -111,6 +111,12 @@ switch to stateless MCP / sticky routing before scaling. The standalone producti
 image defaults to `app.settings.production`; the Compose stack explicitly uses the
 development settings from `.env`.
 
+### Deployment
+
+[Deploy to Fly.io](deploy/fly/README.md) with the production image, separate web,
+worker and scheduler processes, persistent private Redis, and either singleton
+PostgreSQL or Fly Managed Postgres. Provider-specific recipes live under `deploy/`.
+
 ### Testing and dependency updates
 
 Run bootstrap in a disposable copy so the template remains intact. Once running:

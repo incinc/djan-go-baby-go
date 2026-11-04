@@ -3,6 +3,7 @@
 import base64
 from contextlib import contextmanager
 import hashlib
+import os
 from html.parser import HTMLParser
 from urllib.parse import parse_qs, urlsplit
 from uuid import uuid4
@@ -37,8 +38,12 @@ def oauth_token(base_url):
     try:
         with httpx.Client(
             base_url=base_url,
-            headers={"Host": "localhost:8888"},
+            headers={
+                "Host": urlsplit(settings.BASE_URL).netloc,
+                "Origin": settings.BASE_URL,
+            },
             trust_env=False,
+            verify=os.environ.get("SMOKE_CA_BUNDLE", True),
             timeout=10,
         ) as http:
             discovery = http.get("/.well-known/oauth-authorization-server")
@@ -119,7 +124,13 @@ def oauth_token(base_url):
     finally:
         if registration:
             with httpx.Client(
-                base_url=base_url, headers={"Host": "localhost:8888"}, trust_env=False
+                base_url=base_url,
+                headers={
+                    "Host": urlsplit(settings.BASE_URL).netloc,
+                    "Origin": settings.BASE_URL,
+                },
+                trust_env=False,
+                verify=os.environ.get("SMOKE_CA_BUNDLE", True),
             ) as http:
                 http.delete(
                     f'/o/register/{registration["client_id"]}/',
