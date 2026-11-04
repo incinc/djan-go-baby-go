@@ -1,5 +1,5 @@
 # djan-go-baby-go
-In less than three minutes this will set up a fully functional rapid application dev environment with Django and Vue.
+In less than three minutes this will set up a fully functional rapid application dev environment with Django and Vue, preconfigured to serve: a REST API via Django Ninja, WebSockets via Django Channels, and an MCP server with OAuth preconfigured.
 
 The only requirement is [Docker](https://docs.docker.com/desktop/). Make a copy of this template repo, then run:
 
